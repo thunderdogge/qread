@@ -1,0 +1,10 @@
+<resources>
+    <string name="com_thunderdogge_scanner_dialog_detector_unavailable_error_title">Error</string>
+    <string name="com_thunderdogge_scanner_dialog_detector_unavailable_error_text">
+        Scanner failed to load extra components for barcode detector.
+        \n\n1. Try to clean «Google Play Service» cache.
+        \n2. Ensure there is at least 10% of free space on your device.
+    </string>
+    <string name="com_thunderdogge_scanner_dialog_detector_unavailable_positive">Clean cache</string>
+    <string name="com_thunderdogge_scanner_dialog_detector_unavailable_negative">Cancel</string>
+</resources>
