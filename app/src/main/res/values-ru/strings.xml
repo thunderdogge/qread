@@ -1,0 +1,27 @@
+<resources>
+    <string name="date_relative_today">Сегодня</string>
+
+    <string name="dialog_common_button_ok">Понятно</string>
+    <string name="dialog_common_button_close">Закрыть</string>
+    <string name="dialog_common_button_cancel">Отмена</string>
+
+    <string name="scan_result_copy">Скопировать</string>
+    <string name="scan_result_close">Закрыть</string>
+    <string name="scan_result_copied">Значение скопировано в буфер</string>
+
+    <string name="dialog_camera_open_failed_title">Ошибка</string>
+    <string name="dialog_camera_open_failed_text">Не удалось запустить камеру на вашем устройстве. Возможно, у вас отключен доступ к камере для приложения.</string>
+    <string name="dialog_camera_open_failed_positive_text">Перейти в настройки</string>
+
+    <string name="dialog_camera_flash_failed_title">Ошибка</string>
+    <string name="dialog_camera_flash_failed_text">Нам не удалось включить фонарик вашем устройстве. Возможно, ваше устройство не поддерживает эту функцию или у приложения нет доступа к камере.</string>
+
+    <string name="history_title">История</string>
+    <string name="history_menu_delete">Очистить историю</string>
+    <string name="history_empty_hint_title">Список пуст</string>
+    <string name="history_empty_hint_text">Здесь будет храниться история\nотсканированных кодов</string>
+    <string name="history_delete_dialog_title">Очистить историю</string>
+    <string name="history_delete_dialog_text">Все элементы истории будут удалены, вы уверены?</string>
+    <string name="history_delete_dialog_positive">Очистить</string>
+    <string name="history_load_error">Не удалось историю</string>
+</resources>

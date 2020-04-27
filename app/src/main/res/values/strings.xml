@@ -1,0 +1,29 @@
+<resources>
+    <string name="app_name" translatable="false">QRead</string>
+
+    <string name="date_relative_today">Today</string>
+
+    <string name="dialog_common_button_ok">OK</string>
+    <string name="dialog_common_button_close">Close</string>
+    <string name="dialog_common_button_cancel">Cancel</string>
+
+    <string name="scan_result_copy">Copy</string>
+    <string name="scan_result_close">Close</string>
+    <string name="scan_result_copied">Value copied to clipboard</string>
+
+    <string name="dialog_camera_open_failed_title">Error</string>
+    <string name="dialog_camera_open_failed_text">Failed to run camera on your device. Ensure that app has granted permissions for camera.</string>
+    <string name="dialog_camera_open_failed_positive_text">Open settings</string>
+
+    <string name="dialog_camera_flash_failed_title">Error</string>
+    <string name="dialog_camera_flash_failed_text">Failed to turn the lighter on</string>
+
+    <string name="history_title">History</string>
+    <string name="history_load_error">Failed to load history</string>
+    <string name="history_menu_delete">Clear history</string>
+    <string name="history_empty_hint_title">No items</string>
+    <string name="history_empty_hint_text">Scan history will be displayed here</string>
+    <string name="history_delete_dialog_title">Clear history</string>
+    <string name="history_delete_dialog_text">All elements will be erased, are you sure?</string>
+    <string name="history_delete_dialog_positive">Clear</string>
+</resources>

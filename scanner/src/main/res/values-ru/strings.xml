@@ -1,0 +1,10 @@
+<resources>
+    <string name="com_thunderdogge_scanner_dialog_detector_unavailable_error_title">Ошибка</string>
+    <string name="com_thunderdogge_scanner_dialog_detector_unavailable_error_text">
+        Сканер не смог загрузить дополнительные компоненты.
+        \n\n1. Попробуйте очистить кэш приложения «Сервисы Google Play».
+        \n2. Убедитесь, что на вашем устройстве по крайней мере 10% свободного места.
+    </string>
+    <string name="com_thunderdogge_scanner_dialog_detector_unavailable_positive">Очистить кэш</string>
+    <string name="com_thunderdogge_scanner_dialog_detector_unavailable_negative">Закрыть</string>
+</resources>

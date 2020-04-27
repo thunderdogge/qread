@@ -1,0 +1,21 @@
+<resources>
+
+    <style name="Widget.AppBarLayout" parent="ThemeOverlay.MaterialComponents.Light">
+        <item name="android:background">@color/colorPrimary</item>
+    </style>
+
+    <style name="Widget.Toolbar" parent="ThemeOverlay.MaterialComponents.Dark">
+        <item name="titleTextColor">@color/white</item>
+        <item name="colorControlNormal">@color/white</item>
+    </style>
+
+    <style name="Widget.ToolbarPopup" parent="ThemeOverlay.MaterialComponents.Light" />
+
+    <style name="Widget.AlertDialog" parent="@style/ThemeOverlay.MaterialComponents.MaterialAlertDialog">
+        <item name="buttonBarNegativeButtonStyle">@style/Widget.AlertDialogNegativeButton</item>
+    </style>
+
+    <style name="Widget.AlertDialogNegativeButton" parent="Widget.MaterialComponents.Button.TextButton.Dialog">
+        <item name="android:textColor">@color/textSecondary</item>
+    </style>
+</resources>

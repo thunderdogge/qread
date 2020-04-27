@@ -1,0 +1,102 @@
+apply plugin: 'com.android.application'
+apply plugin: 'kotlin-android'
+apply plugin: 'kotlin-android-extensions'
+apply plugin: 'kotlin-kapt'
+apply from: '../ktlint.gradle'
+
+android {
+    compileSdkVersion 29
+
+    dataBinding {
+        enabled = true
+    }
+
+    signingConfigs {
+        release {
+            storeFile file('keystore.jks')
+            keyAlias 'keystore'
+            keyPassword '123456'
+            storePassword '123456'
+        }
+    }
+
+    defaultConfig {
+        applicationId 'com.thunderdogge.qread'
+        minSdkVersion 21
+        targetSdkVersion 29
+        versionCode 1
+        versionName '1.0.0'
+        resConfigs 'ru', 'en'
+        vectorDrawables.useSupportLibrary = true
+    }
+
+    buildTypes {
+        release {
+            minifyEnabled true
+            shrinkResources true
+            signingConfig signingConfigs.release
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+        }
+    }
+
+    lintOptions {
+        xmlReport true
+        abortOnError false
+        checkReleaseBuilds false
+    }
+
+    kotlinOptions {
+        jvmTarget = '1.8'
+    }
+
+    compileOptions {
+        sourceCompatibility 1.8
+        targetCompatibility 1.8
+    }
+
+    android.applicationVariants.all { v ->
+        v.outputs.all {
+            def date = new Date().format('yyyyMMddHHmm')
+            outputFileName = "${v.buildType.name}-${v.applicationId}-${v.versionName}-${v.versionCode}-${date}.apk"
+        }
+    }
+}
+
+dependencies {
+    implementation project(':scanner')
+
+    implementation fileTree(dir: 'libs', include: ['*.jar'])
+    implementation 'org.jetbrains.kotlin:kotlin-stdlib-jdk7:1.3.72'
+
+    // Support
+    implementation 'com.google.android.material:material:1.1.0'
+    implementation 'androidx.lifecycle:lifecycle-extensions:2.2.0'
+    implementation 'androidx.constraintlayout:constraintlayout:1.1.3'
+
+    // DI
+    implementation 'com.github.stephanenicolas.toothpick:ktp:3.1.0'
+    implementation 'com.github.stephanenicolas.toothpick:smoothie:3.1.0'
+    implementation 'com.github.stephanenicolas.toothpick:smoothie-lifecycle:3.1.0'
+    implementation 'com.github.stephanenicolas.toothpick:smoothie-lifecycle-ktp:3.1.0'
+    implementation 'com.github.stephanenicolas.toothpick:smoothie-lifecycle-viewmodel-ktp:3.1.0'
+    kapt 'com.github.stephanenicolas.toothpick:toothpick-compiler:3.1.0'
+
+    // Rx
+    implementation 'io.reactivex.rxjava2:rxjava:2.2.19'
+    implementation 'io.reactivex.rxjava2:rxandroid:2.1.1'
+
+    // Storage
+    implementation 'androidx.room:room-runtime:2.2.5'
+    implementation 'androidx.room:room-rxjava2:2.2.5'
+    kapt 'androidx.room:room-compiler:2.2.5'
+
+    // UI
+    implementation 'ru.terrakok.cicerone:cicerone:5.0.0'
+    implementation 'me.tatarka.bindingcollectionadapter2:bindingcollectionadapter:4.0.0'
+    implementation 'me.tatarka.bindingcollectionadapter2:bindingcollectionadapter-recyclerview:4.0.0'
+
+    // Other
+    implementation 'com.jakewharton.timber:timber:4.7.1'
+    implementation 'com.jakewharton.threetenabp:threetenabp:1.2.4'
+    implementation 'com.google.android.gms:play-services-vision:20.0.0'
+}
