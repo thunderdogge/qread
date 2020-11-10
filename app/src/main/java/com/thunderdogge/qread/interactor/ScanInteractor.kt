@@ -1,11 +1,11 @@
 package com.thunderdogge.qread.interactor
 
 import com.google.android.gms.vision.barcode.Barcode
-import com.thunderdogge.qread.repository.model.History
 import com.thunderdogge.qread.entity.ScanResult
 import com.thunderdogge.qread.entity.ScanResultFormat
 import com.thunderdogge.qread.entity.ScanResultValueFormat
 import com.thunderdogge.qread.repository.HistoryRepository
+import com.thunderdogge.qread.repository.model.History
 import io.reactivex.Completable
 import io.reactivex.Single
 import javax.inject.Inject

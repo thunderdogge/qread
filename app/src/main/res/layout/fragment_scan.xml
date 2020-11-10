@@ -1,138 +1,124 @@
 <?xml version="1.0" encoding="utf-8"?>
-<layout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.coordinatorlayout.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools">
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".presentation.main.MainActivity">
 
-    <data>
-
-        <variable
-            name="vm"
-            type="com.thunderdogge.qread.presentation.scan.ScanViewModel" />
-    </data>
-
-    <androidx.coordinatorlayout.widget.CoordinatorLayout
+    <com.thunderdogge.scanner.camera.CameraPreview
+        android:id="@+id/cpPreview"
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="match_parent" />
 
-        <com.thunderdogge.scanner.camera.CameraPreview
-            android:id="@+id/cpPreview"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent" />
+    <com.thunderdogge.scanner.camera.CameraFocusView
+        android:id="@+id/fvScanRect"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center" />
 
-        <com.thunderdogge.scanner.camera.CameraFocusView
-            android:id="@+id/fvScanRect"
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/flActions"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom"
+        android:background="@color/black80">
+
+        <ImageButton
+            android:id="@+id/ibActionFlash"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_gravity="center" />
+            android:layout_gravity="start"
+            android:layout_marginTop="8dp"
+            android:layout_marginBottom="8dp"
+            android:background="@null"
+            android:contentDescription="@null"
+            android:foreground="?actionBarItemBackground"
+            android:padding="8dp"
+            android:src="@drawable/ic_flash_on"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toStartOf="@+id/ibActionHistory"
+            app:layout_constraintHorizontal_bias="0.5"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
 
-        <androidx.constraintlayout.widget.ConstraintLayout
-            android:id="@+id/flActions"
+        <ImageButton
+            android:id="@+id/ibActionHistory"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginTop="8dp"
+            android:layout_marginBottom="8dp"
+            android:background="@null"
+            android:contentDescription="@null"
+            android:foreground="?actionBarItemBackground"
+            android:padding="8dp"
+            android:src="@drawable/ic_history"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.5"
+            app:layout_constraintStart_toEndOf="@+id/ibActionFlash"
+            app:layout_constraintTop_toTopOf="parent" />
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+    <LinearLayout
+        android:id="@+id/scanResultLayout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="?colorSurface"
+        android:orientation="vertical"
+        android:paddingLeft="10dp"
+        android:paddingTop="20dp"
+        android:paddingRight="10dp"
+        android:paddingBottom="10dp"
+        app:behavior_hideable="true"
+        app:layout_behavior="com.google.android.material.bottomsheet.BottomSheetBehavior">
+
+        <TextView
+            android:id="@+id/resultFormatTextView"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_gravity="bottom"
-            android:background="@color/black80">
+            android:fontFamily="sans-serif-medium"
+            android:paddingLeft="10dp"
+            android:paddingRight="10dp"
+            android:textAppearance="?textAppearanceBody1"
+            tools:text="Format" />
 
-            <androidx.appcompat.widget.AppCompatImageButton
-                android:id="@+id/ibActionFlash"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="start"
-                android:layout_marginTop="8dp"
-                android:layout_marginBottom="8dp"
-                android:background="@null"
-                android:contentDescription="@null"
-                android:foreground="?actionBarItemBackground"
-                android:onClick="@{ () -> vm.toggleFlash() }"
-                android:padding="8dp"
-                android:src="@drawable/ic_flash_on"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toStartOf="@+id/ibActionHistory"
-                app:layout_constraintHorizontal_bias="0.5"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent" />
-
-            <androidx.appcompat.widget.AppCompatImageButton
-                android:id="@+id/ibActionHistory"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center_horizontal"
-                android:layout_marginTop="8dp"
-                android:layout_marginBottom="8dp"
-                android:background="@null"
-                android:contentDescription="@null"
-                android:foreground="?actionBarItemBackground"
-                android:onClick="@{ () -> vm.navigateHistory() }"
-                android:padding="8dp"
-                android:src="@drawable/ic_history"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintHorizontal_bias="0.5"
-                app:layout_constraintStart_toEndOf="@+id/ibActionFlash"
-                app:layout_constraintTop_toTopOf="parent" />
-        </androidx.constraintlayout.widget.ConstraintLayout>
+        <TextView
+            android:id="@+id/resultValueTextView"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:autoLink="email|phone|web"
+            android:lineSpacingExtra="2dp"
+            android:paddingLeft="10dp"
+            android:paddingRight="10dp"
+            android:textAppearance="?textAppearanceBody2"
+            tools:text="value" />
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:background="?colorSurface"
-            android:orientation="vertical"
-            android:paddingLeft="10dp"
-            android:paddingTop="20dp"
-            android:paddingRight="10dp"
-            android:paddingBottom="10dp"
-            app:behavior_hideable="true"
-            app:isExpanded="@={ vm.isScanResultActive }"
-            app:layout_behavior="com.google.android.material.bottomsheet.BottomSheetBehavior">
+            android:layout_marginTop="8dp"
+            android:orientation="horizontal">
 
-            <TextView
-                android:layout_width="match_parent"
+            <Button
+                android:id="@+id/resultCopyButton"
+                style="@style/Widget.MaterialComponents.Button.TextButton"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:fontFamily="sans-serif-medium"
-                android:paddingLeft="10dp"
-                android:paddingRight="10dp"
-                android:text="@{ vm.scanResultFormat }"
-                android:textAppearance="?textAppearanceBody1"
-                android:textColor="@color/textPrimary"
-                tools:text="Format" />
+                android:text="@string/scan_result_copy"
+                android:textColor="@color/textAccent" />
 
-            <TextView
-                android:layout_width="match_parent"
+            <Button
+                android:id="@+id/resultCloseButton"
+                style="@style/Widget.MaterialComponents.Button.TextButton"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="8dp"
-                android:autoLink="email|phone|web"
-                android:lineSpacingExtra="2dp"
-                android:paddingLeft="10dp"
-                android:paddingRight="10dp"
-                android:text="@{ vm.scanResultValue }"
-                android:textAppearance="?textAppearanceBody2"
-                android:textColor="@color/textPrimary"
-                tools:text="value" />
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="8dp"
-                android:orientation="horizontal">
-
-                <com.google.android.material.button.MaterialButton
-                    style="@style/Widget.MaterialComponents.Button.TextButton"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:onClick="@{ () -> vm.copyScanResult() }"
-                    android:text="@string/scan_result_copy"
-                    android:textColor="@color/textAccent" />
-
-                <com.google.android.material.button.MaterialButton
-                    style="@style/Widget.MaterialComponents.Button.TextButton"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:onClick="@{ () -> vm.closeScanResult() }"
-                    android:text="@string/scan_result_close"
-                    android:textColor="@color/textSecondary" />
-            </LinearLayout>
-
+                android:text="@string/scan_result_close"
+                android:textColor="@color/textSecondary" />
         </LinearLayout>
 
-    </androidx.coordinatorlayout.widget.CoordinatorLayout>
+    </LinearLayout>
 
-</layout>
+</androidx.coordinatorlayout.widget.CoordinatorLayout>

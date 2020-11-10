@@ -6,6 +6,7 @@ import android.graphics.Color
 import android.graphics.Paint
 import android.graphics.Path
 import android.os.Handler
+import android.os.Looper
 import android.util.AttributeSet
 import android.view.View
 
@@ -33,7 +34,7 @@ class CameraFocusView : View {
 
     private val rectDefaultPaint: Paint
 
-    private val toggleHandler = Handler()
+    private val toggleHandler = Handler(Looper.getMainLooper())
 
     private val reusableSize = Rectangle()
 

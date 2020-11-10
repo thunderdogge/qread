@@ -1,34 +1,30 @@
 package com.thunderdogge.qread.presentation.history
 
-import androidx.databinding.ObservableArrayList
-import androidx.databinding.ObservableBoolean
+import androidx.lifecycle.MutableLiveData
+import com.thunderdogge.messaggio.Messenger
 import com.thunderdogge.qread.R
 import com.thunderdogge.qread.extensions.DateFormat
 import com.thunderdogge.qread.extensions.observeOnUi
 import com.thunderdogge.qread.interactor.ClipboardInteractor
-import com.thunderdogge.qread.interactor.ResourceProvider
 import com.thunderdogge.qread.interactor.ScanInteractor
 import com.thunderdogge.qread.presentation.base.BaseViewModel
 import com.thunderdogge.qread.presentation.common.DateTimeFormatter
 import com.thunderdogge.qread.presentation.common.DialogLiveEvent
-import com.thunderdogge.qread.presentation.common.SingleLiveEvent
 import com.thunderdogge.qread.repository.model.History
 import org.threeten.bp.LocalDate
 import timber.log.Timber
 import javax.inject.Inject
 
 class HistoryViewModel @Inject constructor(
+    private val messenger: Messenger,
     private val scanInteractor: ScanInteractor,
-    private val resourceProvider: ResourceProvider,
     private val dateTimeFormatter: DateTimeFormatter,
     private val clipboardInteractor: ClipboardInteractor
 ) : BaseViewModel() {
 
-    val isLoading = ObservableBoolean()
+    val isLoading = MutableLiveData<Boolean>()
 
-    val entities = ObservableArrayList<HistoryEntityViewModel>()
-
-    val snackbarMessage = SingleLiveEvent<String>()
+    val entities = MutableLiveData<List<HistoryEntityViewModel>>()
 
     val clearHistoryPromptDialog = DialogLiveEvent()
 
@@ -36,17 +32,16 @@ class HistoryViewModel @Inject constructor(
         loadHistory()
     }
 
-    fun clearHistory() {
+    fun onHistoryClearClick() {
         scanInteractor.clearScanHistory()
             .observeOnUi()
-            .subscribe({ entities.clear() }, { Timber.e(it) })
+            .subscribe({ entities.value = emptyList() }, { Timber.e(it) })
             .disposeLater()
     }
 
-    fun selectHistoryItem(item: HistoryEntityViewModel.Item) {
-        val message = resourceProvider.getString(R.string.scan_result_copied)
+    fun onHistoryItemClick(item: HistoryEntityViewModel.Item) {
         clipboardInteractor.copyValue(item.value)
-        snackbarMessage.value = message
+        messenger.showSnackbar(R.string.scan_result_copied)
     }
 
     fun promptClearHistory() {
@@ -55,19 +50,20 @@ class HistoryViewModel @Inject constructor(
 
     private fun loadHistory() {
         scanInteractor.getScanHistory()
-            .map(::createViewModels)
+            .map { createViewModels(it) }
             .observeOnUi()
-            .doOnSubscribe { isLoading.set(true) }
-            .doAfterTerminate { isLoading.set(false) }
-            .subscribe({ entities.addAll(it) }, { handleLoadHistoryFailed(it) })
+            .doOnSubscribe { isLoading.value = true }
+            .doAfterTerminate { isLoading.value = false }
+            .subscribe(
+                { entities.value = it },
+                { handleLoadHistoryFailed(it) }
+            )
             .disposeLater()
     }
 
     private fun handleLoadHistoryFailed(throwable: Throwable) {
         Timber.e(throwable)
-
-        val message = resourceProvider.getString(R.string.history_load_error)
-        snackbarMessage.value = message
+        messenger.showSnackbar(R.string.history_load_error)
     }
 
     private fun createViewModels(source: List<History>): List<HistoryEntityViewModel> {

@@ -5,6 +5,7 @@ import android.app.Activity
 import android.content.Context
 import android.content.pm.PackageManager
 import android.os.Handler
+import android.os.Looper
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
@@ -32,7 +33,7 @@ class ScanManager private constructor(
 
     private var detectorCallback: ScanDetectorCallback? = null
 
-    private val handler = Handler()
+    private val handler = Handler(Looper.getMainLooper())
 
     private val detector by lazy(LazyThreadSafetyMode.NONE) {
         createBarcodeDetector(activity, config)

@@ -1,26 +1,25 @@
 package com.thunderdogge.qread.presentation.history
 
 import android.os.Bundle
-import android.view.LayoutInflater
 import android.view.Menu
 import android.view.MenuInflater
 import android.view.MenuItem
 import android.view.View
-import android.view.ViewGroup
+import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
-import androidx.lifecycle.Observer
+import by.kirich1409.viewbindingdelegate.viewBinding
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
-import com.thunderdogge.qread.BR
 import com.thunderdogge.qread.R
 import com.thunderdogge.qread.databinding.FragmentHistoryBinding
 import com.thunderdogge.qread.presentation.base.BaseFragment
-import com.thunderdogge.qread.presentation.extensions.showSnackbar
-import kotlinx.android.synthetic.main.fragment_history.*
-import me.tatarka.bindingcollectionadapter2.ItemBinding
 
-class HistoryFragment : BaseFragment() {
+class HistoryFragment : BaseFragment(R.layout.fragment_history) {
+
+    private lateinit var adapter: HistoryAdapter
 
     private val viewModel by viewModel<HistoryViewModel>()
+
+    private val viewBinding by viewBinding<FragmentHistoryBinding>()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -28,29 +27,12 @@ class HistoryFragment : BaseFragment() {
         setHasOptionsMenu(true)
     }
 
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, bundle: Bundle?): View? {
-        val binding = FragmentHistoryBinding.inflate(inflater, container, false)
-        binding.vm = viewModel
-        binding.binding = ItemBinding.of { itemBinding, _, itemViewModel ->
-            when (itemViewModel) {
-                is HistoryEntityViewModel.Item -> itemBinding.set(BR.item, R.layout.view_item_history_item).bindExtra(BR.parent, viewModel)
-                is HistoryEntityViewModel.Group -> itemBinding.set(BR.item, R.layout.view_item_history_group)
-            }
-        }
-
-        return binding.root
-    }
-
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        initObservers()
-        initAppearance()
-    }
-
-    private fun initObservers() {
-        viewModel.snackbarMessage.observe(viewLifecycleOwner, Observer(::showSnackbar))
-        viewModel.clearHistoryPromptDialog.observe(viewLifecycleOwner, Observer { showClearHistoryPromptDialog() })
+        setupAdapter()
+        setupBinding()
+        setupAppearance()
     }
 
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
@@ -68,16 +50,35 @@ class HistoryFragment : BaseFragment() {
         return super.onOptionsItemSelected(item)
     }
 
-    private fun initAppearance() {
-        setSupportActionBar(toolbar)
+    private fun setupAdapter() {
+        adapter = HistoryAdapter {
+            viewModel.onHistoryItemClick(it)
+        }
+        viewBinding.rvHistory.adapter = adapter
+    }
+
+    private fun setupBinding() {
+        viewModel.entities.observe(viewLifecycleOwner, { handleEntities(it) })
+        viewModel.isLoading.observe(viewLifecycleOwner, { viewBinding.pbLoading.isVisible = it })
+        viewModel.clearHistoryPromptDialog.observe(viewLifecycleOwner, { showClearHistoryPromptDialog() })
+    }
+
+    private fun setupAppearance() {
+        setSupportActionBar(viewBinding.toolbar)
         setDisplayHomeAsUpEnabled()
+    }
+
+    private fun handleEntities(entities: List<HistoryEntityViewModel>) {
+        adapter.items = entities
+        adapter.notifyDataSetChanged()
+        viewBinding.llEmpty.isVisible = entities.isEmpty()
     }
 
     private fun showClearHistoryPromptDialog() {
         MaterialAlertDialogBuilder(requireContext())
             .setTitle(R.string.history_delete_dialog_title)
             .setMessage(R.string.history_delete_dialog_text)
-            .setPositiveButton(R.string.history_delete_dialog_positive) { _, _ -> viewModel.clearHistory() }
+            .setPositiveButton(R.string.history_delete_dialog_positive) { _, _ -> viewModel.onHistoryClearClick() }
             .setNegativeButton(R.string.dialog_common_button_cancel, null)
             .show()
     }
