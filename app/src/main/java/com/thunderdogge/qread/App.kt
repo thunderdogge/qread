@@ -12,12 +12,12 @@ class App : Application() {
     override fun onCreate() {
         super.onCreate()
 
-        initIoc()
+        initDi()
         initTime()
         initLogger()
     }
 
-    private fun initIoc() {
+    private fun initDi() {
         if (BuildConfig.DEBUG) {
             KTP.setConfiguration(Configuration.forDevelopment().preventMultipleRootScopes())
         } else {

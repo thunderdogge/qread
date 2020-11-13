@@ -1,13 +1,14 @@
 package com.thunderdogge.qread.presentation.base
 
 import android.os.Bundle
+import androidx.annotation.LayoutRes
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import toothpick.ktp.KTP
 import toothpick.smoothie.lifecycle.closeOnDestroy
 
-abstract class BaseActivity : AppCompatActivity() {
+abstract class BaseActivity(@LayoutRes contentLayoutId: Int) : AppCompatActivity(contentLayoutId) {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 

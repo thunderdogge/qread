@@ -21,9 +21,10 @@
     <string name="history_title">History</string>
     <string name="history_load_error">Failed to load history</string>
     <string name="history_menu_delete">Clear history</string>
+    <string name="history_empty_hint_icon">🤔</string>
     <string name="history_empty_hint_title">No items</string>
-    <string name="history_empty_hint_text">Scan history will be displayed here</string>
-    <string name="history_delete_dialog_title">Clear history</string>
-    <string name="history_delete_dialog_text">All elements will be erased, are you sure?</string>
+    <string name="history_empty_hint_text">Scan history will be here</string>
+    <string name="history_delete_dialog_title">Clear history?</string>
+    <string name="history_delete_dialog_text">All elements will be permanently deleted</string>
     <string name="history_delete_dialog_positive">Clear</string>
 </resources>

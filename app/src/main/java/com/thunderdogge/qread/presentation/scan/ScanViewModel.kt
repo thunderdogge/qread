@@ -1,13 +1,12 @@
 package com.thunderdogge.qread.presentation.scan
 
-import androidx.databinding.ObservableBoolean
-import androidx.databinding.ObservableField
 import androidx.lifecycle.MutableLiveData
+import com.github.terrakok.cicerone.Router
 import com.google.android.gms.vision.barcode.Barcode
+import com.thunderdogge.messaggio.Messenger
 import com.thunderdogge.qread.R
 import com.thunderdogge.qread.extensions.observeOnUi
 import com.thunderdogge.qread.interactor.ClipboardInteractor
-import com.thunderdogge.qread.interactor.ResourceProvider
 import com.thunderdogge.qread.interactor.ScanInteractor
 import com.thunderdogge.qread.presentation.Screens
 import com.thunderdogge.qread.presentation.base.BaseViewModel
@@ -15,15 +14,14 @@ import com.thunderdogge.qread.presentation.common.DialogLiveEvent
 import com.thunderdogge.qread.presentation.common.SingleLiveEvent
 import io.reactivex.Observable
 import io.reactivex.subjects.PublishSubject
-import ru.terrakok.cicerone.Router
 import timber.log.Timber
 import java.util.concurrent.TimeUnit
 import javax.inject.Inject
 
 class ScanViewModel @Inject constructor(
     private val router: Router,
+    private val messenger: Messenger,
     private val scanInteractor: ScanInteractor,
-    private val resourceProvider: ResourceProvider,
     private val clipboardInteractor: ClipboardInteractor
 ) : BaseViewModel() {
 
@@ -31,13 +29,11 @@ class ScanViewModel @Inject constructor(
 
     val isScanSucceed = SingleLiveEvent<Boolean>()
 
-    val snackbarMessage = SingleLiveEvent<String>()
+    val scanResultFormat = MutableLiveData<String>()
 
-    val scanResultFormat = ObservableField<String>()
+    val scanResultValue = MutableLiveData<String>()
 
-    val scanResultValue = ObservableField<String>()
-
-    val isScanResultActive = ObservableBoolean()
+    val isScanResultActive = MutableLiveData<Boolean>()
 
     val isAutoFocusForced = MutableLiveData<Boolean>()
 
@@ -48,28 +44,29 @@ class ScanViewModel @Inject constructor(
     private val scannerBarcodeSubject = PublishSubject.create<Barcode>()
 
     init {
+        initState()
         initScannerObserver()
         initAutofocusObserver()
     }
 
-    fun toggleFlash() {
+    fun onFlashClick() {
         val isOn = isFlashOn.value?.not() ?: true
         isFlashOn.value = isOn
     }
 
-    fun copyScanResult() {
-        val format = scanResultFormat.get().orEmpty()
-        val value = scanResultValue.get().orEmpty()
+    fun onResultCopyClick() {
+        val format = scanResultFormat.value.orEmpty()
+        val value = scanResultValue.value.orEmpty()
         clipboardInteractor.copyValue(value, format)
 
-        snackbarMessage.value = resourceProvider.getString(R.string.scan_result_copied)
+        messenger.showSnackbar(R.string.scan_result_copied)
     }
 
-    fun closeScanResult() {
-        isScanResultActive.set(false)
+    fun onResultCloseClick() {
+        isScanResultActive.value = false
     }
 
-    fun navigateHistory() {
+    fun onHistoryClick() {
         router.navigateTo(Screens.History)
     }
 
@@ -90,6 +87,10 @@ class ScanViewModel @Inject constructor(
         cameraPermissionDeniedDialog.show()
     }
 
+    private fun initState() {
+        isScanResultActive.value = false
+    }
+
     private fun initScannerObserver() {
         scannerBarcodeSubject
             .throttleFirst(1, TimeUnit.SECONDS)
@@ -98,9 +99,9 @@ class ScanViewModel @Inject constructor(
             .doOnNext { isScanSucceed.value = true }
             .subscribe(
                 {
-                    scanResultValue.set(it.value)
-                    scanResultFormat.set(it.format.toString())
-                    isScanResultActive.set(true)
+                    scanResultValue.value = it.value
+                    scanResultFormat.value = it.format.toString()
+                    isScanResultActive.value = true
                 },
                 { Timber.e(it, "Object scanning failed") }
             )

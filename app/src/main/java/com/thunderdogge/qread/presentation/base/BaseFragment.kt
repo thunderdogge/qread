@@ -1,6 +1,7 @@
 package com.thunderdogge.qread.presentation.base
 
 import android.os.Bundle
+import androidx.annotation.LayoutRes
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
 import androidx.fragment.app.Fragment
@@ -10,7 +11,7 @@ import toothpick.config.Module
 import toothpick.ktp.KTP
 import toothpick.smoothie.lifecycle.closeOnDestroy
 
-abstract class BaseFragment : Fragment() {
+abstract class BaseFragment(@LayoutRes contentLayoutId: Int) : Fragment(contentLayoutId) {
 
     protected fun setSupportActionBar(toolbar: Toolbar) {
         (activity as? AppCompatActivity)?.setSupportActionBar(toolbar)

@@ -2,42 +2,46 @@ package com.thunderdogge.qread.presentation.main
 
 import android.os.Bundle
 import android.view.MenuItem
-import androidx.databinding.DataBindingUtil
+import com.github.terrakok.cicerone.NavigatorHolder
+import com.github.terrakok.cicerone.androidx.AppNavigator
+import com.thunderdogge.messaggio.MessageDispatcher
+import com.thunderdogge.messaggio.MessageReceiver
 import com.thunderdogge.qread.R
-import com.thunderdogge.qread.databinding.ActivityMainBinding
-import com.thunderdogge.qread.extensions.lazily
 import com.thunderdogge.qread.presentation.base.BaseActivity
-import ru.terrakok.cicerone.NavigatorHolder
-import ru.terrakok.cicerone.android.support.SupportAppNavigator
 import toothpick.ktp.delegate.inject
 
-class MainActivity : BaseActivity() {
+class MainActivity : BaseActivity(R.layout.activity_main) {
 
     private val viewModel by viewModel<MainViewModel>()
 
-    private val navigator by lazily {
-        SupportAppNavigator(this, R.id.flContent)
-    }
+    private val navigator = AppNavigator(this, R.id.flContent)
 
     private val navigationHolder by inject<NavigatorHolder>()
+
+    private val messageReceiver = MessageReceiver(this)
+
+    private val messageDispatcher by inject<MessageDispatcher>()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        val binding = DataBindingUtil.setContentView<ActivityMainBinding>(this, R.layout.activity_main)
-        binding.vm = viewModel
+        if (savedInstanceState == null) {
+            viewModel.onStart()
+        }
     }
 
     override fun onResumeFragments() {
         super.onResumeFragments()
 
         navigationHolder.setNavigator(navigator)
+        messageDispatcher.attachReceiver(messageReceiver)
     }
 
     override fun onPause() {
         super.onPause()
 
         navigationHolder.removeNavigator()
+        messageDispatcher.detachReceiver()
     }
 
     override fun onBackPressed() {

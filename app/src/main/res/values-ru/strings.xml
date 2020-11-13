@@ -18,10 +18,11 @@
 
     <string name="history_title">История</string>
     <string name="history_menu_delete">Очистить историю</string>
+    <string name="history_empty_hint_icon">🤔</string>
     <string name="history_empty_hint_title">Список пуст</string>
     <string name="history_empty_hint_text">Здесь будет храниться история\nотсканированных кодов</string>
-    <string name="history_delete_dialog_title">Очистить историю</string>
-    <string name="history_delete_dialog_text">Все элементы истории будут удалены, вы уверены?</string>
+    <string name="history_delete_dialog_title">Очистить историю?</string>
+    <string name="history_delete_dialog_text">Все элементы истории будут удалены</string>
     <string name="history_delete_dialog_positive">Очистить</string>
     <string name="history_load_error">Не удалось историю</string>
 </resources>

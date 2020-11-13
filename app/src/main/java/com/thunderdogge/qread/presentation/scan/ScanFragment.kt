@@ -1,53 +1,46 @@
 package com.thunderdogge.qread.presentation.scan
 
 import android.os.Bundle
-import android.view.LayoutInflater
 import android.view.View
-import android.view.ViewGroup
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
-import androidx.lifecycle.Observer
+import by.kirich1409.viewbindingdelegate.viewBinding
 import com.google.android.gms.vision.Detector
 import com.google.android.gms.vision.barcode.Barcode
+import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.thunderdogge.qread.R
 import com.thunderdogge.qread.databinding.FragmentScanBinding
 import com.thunderdogge.qread.extensions.lazily
 import com.thunderdogge.qread.presentation.base.BaseFragment
-import com.thunderdogge.qread.presentation.extensions.showSnackbar
 import com.thunderdogge.scanner.BaseScanDetectorCallback
 import com.thunderdogge.scanner.ScanCameraCallback
 import com.thunderdogge.scanner.ScanConfig
 import com.thunderdogge.scanner.ScanManager
 import com.thunderdogge.scanner.camera.CameraFocusMode
-import kotlinx.android.synthetic.main.fragment_scan.*
 import timber.log.Timber
 
-class ScanFragment : BaseFragment() {
+class ScanFragment : BaseFragment(R.layout.fragment_scan) {
 
     private val viewModel by viewModel<ScanViewModel>()
 
+    private val viewBinding by viewBinding<FragmentScanBinding>()
+
     private val scanManager by lazily {
         val config = ScanConfig.Builder()
-            .setBarcodeFormats(Barcode.QR_CODE or Barcode.EAN_13)
+            .setBarcodeFormats(Barcode.ALL_FORMATS)
             .setCameraFocusMode(CameraFocusMode.ContinuousPicture)
             .build()
 
         ScanManager(config, this)
     }
 
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, bundle: Bundle?): View? {
-        val binding = FragmentScanBinding.inflate(inflater, container, false)
-        binding.vm = viewModel
-
-        return binding.root
-    }
-
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        initScanner()
-        initObservers()
+        setupScanner()
+        setupBinding()
+        setupListeners()
     }
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
@@ -80,35 +73,53 @@ class ScanFragment : BaseFragment() {
         scanManager.handleCameraPermissionsResult(requestCode, grantResults)
     }
 
-    private fun initScanner() {
-        scanManager.setCameraPreview(cpPreview)
+    private fun setupScanner() {
+        scanManager.setCameraPreview(viewBinding.cpPreview)
         scanManager.setCameraCallback(CameraCallback())
         scanManager.setDetectorCallback(DetectorCallback())
     }
 
-    private fun initObservers() {
-        viewModel.isFlashOn.observe(viewLifecycleOwner, Observer { toggleCameraFlash(it == true) })
-        viewModel.isScanSucceed.observe(viewLifecycleOwner, Observer { fvScanRect.toggle(it == true) })
-        viewModel.snackbarMessage.observe(viewLifecycleOwner, Observer(::showSnackbar))
-        viewModel.isAutoFocusForced.observe(viewLifecycleOwner, Observer { if (it == true) tryForceCameraAutoFocus() })
-        viewModel.cameraStartFailureDialog.observe(viewLifecycleOwner, Observer { if (it == true) showCameraStartFailureDialog() })
-        viewModel.cameraPermissionDeniedDialog.observe(viewLifecycleOwner, Observer { if (it == true) showCameraStartFailureDialog() })
+    private fun setupBinding() {
+        viewModel.isFlashOn.observe(viewLifecycleOwner, { toggleCameraFlash(it == true) })
+        viewModel.isScanSucceed.observe(viewLifecycleOwner, { viewBinding.fvScanRect.toggle(it == true) })
+        viewModel.scanResultFormat.observe(viewLifecycleOwner, { viewBinding.resultFormatTextView.text = it })
+        viewModel.scanResultValue.observe(viewLifecycleOwner, { viewBinding.resultValueTextView.text = it })
+        viewModel.isScanResultActive.observe(viewLifecycleOwner, { toggleScanResultActive(it == true) })
+        viewModel.isAutoFocusForced.observe(viewLifecycleOwner, { if (it == true) tryForceCameraAutoFocus() })
+        viewModel.cameraStartFailureDialog.observe(viewLifecycleOwner, { if (it == true) showCameraStartFailureDialog() })
+        viewModel.cameraPermissionDeniedDialog.observe(viewLifecycleOwner, { if (it == true) showCameraStartFailureDialog() })
+    }
+
+    private fun setupListeners() {
+        viewBinding.ibActionFlash.setOnClickListener { viewModel.onFlashClick() }
+        viewBinding.ibActionHistory.setOnClickListener { viewModel.onHistoryClick() }
+        viewBinding.resultCopyButton.setOnClickListener { viewModel.onResultCopyClick() }
+        viewBinding.resultCloseButton.setOnClickListener { viewModel.onResultCloseClick() }
     }
 
     private fun toggleCameraFlash(flag: Boolean) {
-        val isSuccessful = cpPreview.toggleFlashMode(flag)
+        val isSuccessful = viewBinding.cpPreview.toggleFlashMode(flag)
         if (flag && isSuccessful == false) {
             showCameraFlashToggleFailedDialog()
         }
 
         val iconResource = if (flag) R.drawable.ic_flash_off else R.drawable.ic_flash_on
         val iconDrawable = ContextCompat.getDrawable(requireContext(), iconResource)
-        ibActionFlash.setImageDrawable(iconDrawable)
+        viewBinding.ibActionFlash.setImageDrawable(iconDrawable)
+    }
+
+    private fun toggleScanResultActive(isActive: Boolean) {
+        val behaviour = BottomSheetBehavior.from(viewBinding.scanResultLayout)
+        behaviour.state = if (isActive) {
+            BottomSheetBehavior.STATE_EXPANDED
+        } else {
+            BottomSheetBehavior.STATE_HIDDEN
+        }
     }
 
     private fun tryForceCameraAutoFocus() {
         try {
-            cpPreview.autoFocus()
+            viewBinding.cpPreview.autoFocus()
         } catch (e: Throwable) {
             Timber.w(e, "Force camera auto focus failed")
         }
